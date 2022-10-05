@@ -603,9 +603,10 @@ int LdsLidar::ParseTimesyncConfig(rapidjson::Document &doc) {
 
     if (!object.HasMember("device_name") || !object["device_name"].IsString())
       break;
-    std::string device_name = object["device_name"].GetString();
-    std::strncpy(timesync_config_.dev_config.name, device_name.c_str(),
-                 sizeof(timesync_config_.dev_config.name));
+    const std::string device_name = object["device_name"].GetString();
+    const auto len = std::min(sizeof(timesync_config_.dev_config.name), device_name.size());
+    std::strncpy(timesync_config_.dev_config.name, device_name.c_str(), len);
+    timesync_config_.dev_config.name[len] = '\0';
 
     if (!object.HasMember("comm_device_type") ||
         !object["comm_device_type"].IsInt())
@@ -666,9 +667,10 @@ int LdsLidar::ParseConfigFile(const char *pathname) {
           memset(&config, 0, sizeof(config));
           if (object.HasMember("broadcast_code") &&
               object["broadcast_code"].IsString()) {
-            std::string broadcast_code = object["broadcast_code"].GetString();
-            std::strncpy(config.broadcast_code, broadcast_code.c_str(),
-                         sizeof(config.broadcast_code));
+            const std::string broadcast_code = object["broadcast_code"].GetString();
+            const auto len = std::min(sizeof(config.broadcast_code), broadcast_code.size());
+            std::strncpy(config.broadcast_code, broadcast_code.c_str(), len);
+            config.broadcast_code[len] = '\0';
           } else {
             printf("User config file parse error\n");
             continue;
