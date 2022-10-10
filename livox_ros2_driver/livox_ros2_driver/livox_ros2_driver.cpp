@@ -209,6 +209,15 @@ void LivoxDriver::pollThread()
 }
 }  // namespace livox_ros
 
-#include <rclcpp_components/register_node_macro.hpp>
+int main(int argc, char* argv[])
+{
+  rclcpp::init(argc, argv);
 
-RCLCPP_COMPONENTS_REGISTER_NODE(livox_ros::LivoxDriver)
+  auto options = rclcpp::NodeOptions{};
+  auto node = std::make_shared<livox_ros::LivoxDriver>(options);
+
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+
+  return 0;
+}
