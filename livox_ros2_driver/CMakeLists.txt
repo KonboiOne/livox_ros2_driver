@@ -28,6 +28,14 @@ ExternalProject_Add(livox-sdk
         GIT_REPOSITORY https://github.com/KonboiOne/Livox-SDK.git
         GIT_TAG 71a1d78
         GIT_SHALLOW ON
+        DOWNLOAD_NO_PROGRESS ON
+        GIT_PROGRESS OFF
+        LOG_UPDATE ON
+        LOG_DOWNLOAD ON
+        LOG_CONFIGURE ON
+        LOG_INSTALL ON
+        LOG_BUILD ON
+        LOG_OUTPUT_ON_FAILURE ON
         TIMEOUT 60
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=Release
