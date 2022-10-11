@@ -26,7 +26,7 @@ set(livox_sdk_INSTALL_PATH ${CMAKE_CURRENT_BINARY_DIR}/livox-sdk)
 set(livox_sdk_LIBRARY ${livox_sdk_INSTALL_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}livox_sdk_static${CMAKE_STATIC_LIBRARY_SUFFIX})
 ExternalProject_Add(livox-sdk
         GIT_REPOSITORY https://github.com/KonboiOne/Livox-SDK.git
-        GIT_TAG master
+        GIT_TAG 71a1d78
         GIT_SHALLOW ON
         TIMEOUT 60
         CMAKE_ARGS
