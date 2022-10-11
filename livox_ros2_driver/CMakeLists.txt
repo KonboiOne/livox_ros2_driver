@@ -30,13 +30,6 @@ find_package(pcl_conversions REQUIRED)
 find_package(pcl_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 
-find_package(PkgConfig)
-pkg_check_modules(APR apr-1)
-if (APR_FOUND)
-    message(${APR_INCLUDE_DIRS})
-    message(${APR_LIBRARIES})
-endif (APR_FOUND)
-
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
@@ -62,7 +55,6 @@ target_compile_options(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
         SYSTEM PRIVATE
-        ${APR_INCLUDE_DIRS}
         ${PCL_INCLUDE_DIRS}
         ${geometry_msgs_INCLUDE_DIRS}
         ${livox_interfaces_INCLUDE_DIRS}
@@ -78,7 +70,6 @@ target_include_directories(${PROJECT_NAME}
         )
 
 target_link_libraries(${PROJECT_NAME}
-        ${APR_LIBRARIES}
         ${PCL_LIBRARIES}
         ${geometry_msgs_LIBRARIES}
         ${livox_interfaces_LIBRARIES}
