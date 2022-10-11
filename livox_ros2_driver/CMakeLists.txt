@@ -21,11 +21,23 @@ endif ()
 include(cmake/version.cmake)
 project(${PROJECT_NAME} VERSION ${LIVOX_ROS_DRIVER_VERSION} LANGUAGES CXX)
 
+include(ExternalProject)
+set(livox_sdk_INSTALL_PATH ${CMAKE_CURRENT_BINARY_DIR}/livox-sdk)
+set(livox_sdk_LIBRARY ${livox_sdk_INSTALL_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}livox_sdk_static${CMAKE_STATIC_LIBRARY_SUFFIX})
+ExternalProject_Add(livox-sdk
+        GIT_REPOSITORY https://github.com/KonboiOne/Livox-SDK.git
+        GIT_TAG master
+        GIT_SHALLOW ON
+        TIMEOUT 60
+        CMAKE_ARGS
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_INSTALL_PREFIX=${livox_sdk_INSTALL_PATH}
+        BUILD_BYPRODUCTS ${livox_sdk_LIBRARY}
+        )
+
 find_package(PCL REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(livox_interfaces REQUIRED)
-find_package(livox_sdk_vendor REQUIRED) # must appear before livox_sdk
-find_package(livox_sdk REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -33,7 +45,10 @@ find_package(rclcpp REQUIRED)
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME})
+add_dependencies(${PROJECT_NAME} livox-sdk)
+target_sources(${PROJECT_NAME}
+        PRIVATE
         livox_ros2_driver/lvx_file.cpp
         livox_ros2_driver/ldq.cpp
         livox_ros2_driver/lds.cpp
@@ -48,17 +63,15 @@ add_executable(${PROJECT_NAME}
         common/comm/sdk_protocol.cpp
         common/comm/gps_protocol.cpp
         )
-
 target_compile_options(${PROJECT_NAME}
         PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wno-missing-field-initializers -fPIC>
         )
-
 target_include_directories(${PROJECT_NAME}
         SYSTEM PRIVATE
         ${PCL_INCLUDE_DIRS}
         ${geometry_msgs_INCLUDE_DIRS}
         ${livox_interfaces_INCLUDE_DIRS}
-        ${livox_sdk_INCLUDE_DIRS}
+        ${livox_sdk_INSTALL_PATH}/include
         ${pcl_conversions_INCLUDE_DIRS}
         common
         common/comm
@@ -73,7 +86,7 @@ target_link_libraries(${PROJECT_NAME}
         ${PCL_LIBRARIES}
         ${geometry_msgs_LIBRARIES}
         ${livox_interfaces_LIBRARIES}
-        ${livox_sdk_LIBRARIES}
+        ${livox_sdk_LIBRARY}
         ${pcl_conversions_LIBRARIES}
         rclcpp::rclcpp
         )
