@@ -45,7 +45,6 @@ ExternalProject_Add(livox-sdk
 
 find_package(PCL REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(livox_interfaces REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -78,7 +77,6 @@ target_include_directories(${PROJECT_NAME}
         SYSTEM PRIVATE
         ${PCL_INCLUDE_DIRS}
         ${geometry_msgs_INCLUDE_DIRS}
-        ${livox_interfaces_INCLUDE_DIRS}
         ${livox_sdk_INSTALL_PATH}/include
         ${pcl_conversions_INCLUDE_DIRS}
         common
@@ -90,16 +88,22 @@ target_include_directories(${PROJECT_NAME}
         timesync/user_uart
         )
 
+rosidl_get_typesupport_target(livox_typesupport_target_cpp
+          livox_interfaces "rosidl_typesupport_cpp")
+
+rosidl_get_typesupport_target(livox_typesupport_target_c
+          livox_interfaces "rosidl_typesupport_c")
+
 target_link_libraries(${PROJECT_NAME}
         ${PCL_LIBRARIES}
         ${geometry_msgs_LIBRARIES}
-        ${livox_interfaces_LIBRARIES}
         ${livox_sdk_LIBRARY}
         ${pcl_conversions_LIBRARIES}
         rclcpp::rclcpp
+        ${livox_typesupport_target_cpp}
+        ${livox_typesupport_target_c}
         )
 
 install(TARGETS ${PROJECT_NAME}
-        DESTINATION lib/${PROJECT_NAME})
+        DESTINATION ${INSTALL_DIR})
 
-ament_package()
