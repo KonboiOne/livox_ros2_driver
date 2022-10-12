@@ -27,7 +27,7 @@ set(livox_sdk_LIBRARY ${livox_sdk_INSTALL_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFI
 ExternalProject_Add(livox-sdk
         GIT_REPOSITORY https://github.com/KonboiOne/Livox-SDK.git
         GIT_TAG bb64378d
-        GIT_SHALLOW ON
+        GIT_SHALLOW OFF
         DOWNLOAD_NO_PROGRESS ON
         GIT_PROGRESS OFF
         LOG_UPDATE ON
