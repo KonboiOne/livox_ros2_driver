@@ -3,6 +3,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(livox_ros2_driver)
 
+unset(CMAKE_CXX_CLANG_TIDY)
+
 # Default to C99
 if (NOT CMAKE_C_STANDARD)
     set(CMAKE_C_STANDARD 99)
@@ -89,10 +91,10 @@ target_include_directories(${PROJECT_NAME}
         )
 
 rosidl_get_typesupport_target(livox_typesupport_target_cpp
-          livox_interfaces "rosidl_typesupport_cpp")
+        livox_interfaces "rosidl_typesupport_cpp")
 
 rosidl_get_typesupport_target(livox_typesupport_target_c
-          livox_interfaces "rosidl_typesupport_c")
+        livox_interfaces "rosidl_typesupport_c")
 
 target_link_libraries(${PROJECT_NAME}
         ${PCL_LIBRARIES}
