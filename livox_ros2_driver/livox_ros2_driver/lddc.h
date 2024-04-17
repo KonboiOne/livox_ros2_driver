@@ -57,7 +57,7 @@ typedef enum {
 class Lddc {
  public:
   Lddc(int format, int multi_topic, int data_src, int output_type, double frq,
-       std::string &frame_id, std::string &frame_id_imu);
+       const std::string &frame_id, const std::string &frame_id_imu);
   ~Lddc();
 
   int RegisterLds(Lds *lds);
