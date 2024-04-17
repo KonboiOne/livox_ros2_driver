@@ -492,13 +492,15 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
   uint8_t point_buf[2048];
   LivoxImuDataProcess(point_buf, raw_packet);
 
+  const double standard_g = 9.80665;
+
   LivoxImuPoint *imu = (LivoxImuPoint *)point_buf;
   imu_data.angular_velocity.x = imu->gyro_x;
   imu_data.angular_velocity.y = imu->gyro_y;
   imu_data.angular_velocity.z = imu->gyro_z;
-  imu_data.linear_acceleration.x = imu->acc_x;
-  imu_data.linear_acceleration.y = imu->acc_y;
-  imu_data.linear_acceleration.z = imu->acc_z;
+  imu_data.linear_acceleration.x = imu->acc_x * standard_g;
+  imu_data.linear_acceleration.y = imu->acc_y * standard_g;
+  imu_data.linear_acceleration.z = imu->acc_z * standard_g;
 
   QueuePopUpdate(queue);
   ++published_packet;
