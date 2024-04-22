@@ -42,13 +42,14 @@ namespace livox_ros {
 
 /** Lidar Data Distribute Control--------------------------------------------*/
 Lddc::Lddc(int format, int multi_topic, int data_src, int output_type,
-           double frq, std::string &frame_id)
+           double frq, const std::string &frame_id, const std::string &frame_id_imu)
     : transfer_format_(format),
       use_multi_topic_(multi_topic),
       data_src_(data_src),
       output_type_(output_type),
       publish_frq_(frq),
-      frame_id_(frame_id) {
+      frame_id_(frame_id),
+      frame_id_imu_(frame_id_imu) {
   publish_period_ns_ = kNsPerSecond / publish_frq_;
   lds_ = nullptr;
 #if 0
@@ -476,7 +477,7 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
   uint32_t published_packet = 0;
 
   sensor_msgs::msg::Imu imu_data;
-  imu_data.header.frame_id = "livox_frame";
+  imu_data.header.frame_id = "lidars/front";
 
   uint8_t data_source = lds_->lidars_[handle].data_src;
   StoragePacket storage_packet;
@@ -492,13 +493,15 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
   uint8_t point_buf[2048];
   LivoxImuDataProcess(point_buf, raw_packet);
 
+  const double standard_g = 9.80665;
+
   LivoxImuPoint *imu = (LivoxImuPoint *)point_buf;
   imu_data.angular_velocity.x = imu->gyro_x;
   imu_data.angular_velocity.y = imu->gyro_y;
   imu_data.angular_velocity.z = imu->gyro_z;
-  imu_data.linear_acceleration.x = imu->acc_x;
-  imu_data.linear_acceleration.y = imu->acc_y;
-  imu_data.linear_acceleration.z = imu->acc_z;
+  imu_data.linear_acceleration.x = imu->acc_x * standard_g;
+  imu_data.linear_acceleration.y = imu->acc_y * standard_g;
+  imu_data.linear_acceleration.z = imu->acc_z * standard_g;
 
   QueuePopUpdate(queue);
   ++published_packet;
